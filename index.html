@@ -81,7 +81,7 @@
                 const xStep = w / p;
                 const yStep = h / p;
 
-                const vactor = [];
+                const vector = [];
                 let __draw = [];
 
                 for (let x = 0; x < w; x += xStep) {
@@ -104,7 +104,7 @@
                             __draw.push([x, y, xStep, yStep]);
                         }
 
-                        vactor.push(nonEmptyPixelCount > 1 ? 1 : 0);
+                        vector.push(nonEmptyPixelCount > 1 ? 1 : 0);
                     }
 
                 }
@@ -118,7 +118,7 @@
                         this.drawCell(__draw[_d][0], __draw[_d][1], __draw[_d][2], __draw[_d][3]);
                     }
                 }
-                return vactor;
+                return vector;
             }
 
             el.addEventListener('mousedown', function (e) {
@@ -149,7 +149,7 @@
             })
         }
 
-        let vactor = [];
+        let vector = [];
         let net = null;
         let train_data = [];
 
@@ -162,30 +162,29 @@
                 d.clear();
             }
             if (e.key.toLocaleLowerCase() == 'v') {
-                d.calculate(true);
+                vector = d.calculate(true);
 
                 //train
                 if (confirm('Positive?')) {
                     train_data.push({
-                        input: vactor,
+                        input: vector,
                         output: { positive: 1 }
                     })
                 } else {
                     train_data.push({
-                        input: vactor,
+                        input: vector,
                         output: { negative: 1 }
                     })
                 }
-                d.clear();
             }
             if (e.key.toLocaleLowerCase() == 'b') {
                 net = new brain.NeuralNetwork();
+                console.log(train_data);
                 net.train(train_data, { log: true });
 
-                const result = brain.likely(d.calculate, net);
+                const result = brain.likely(d.calculate(), net);
 
                 alert(result);
-                d.clear();
             }
         })
     </script>
